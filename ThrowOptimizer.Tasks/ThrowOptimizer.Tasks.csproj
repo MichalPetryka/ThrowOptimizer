@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>9</LangVersion>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\artifacts\</PackageOutputPath>
+    <VersionSuffix>build$([System.DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss'))</VersionSuffix>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="build\*" PackagePath="build\" />
+    <Content Include="buildMultiTargeting\*" PackagePath="buildMultiTargeting\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.5.0" />
+    <PackageReference Include="ilmerge" Version="3.0.41" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThrowOptimizer\ThrowOptimizer.csproj" PrivateAssets="All" />
+  </ItemGroup>
+  <Target Name="PackNugetBuild" AfterTargets="Build">
+    <Exec Command="$(ILMergeConsolePath) /out:$(OutDir)\ThrowOptimizer.Tasks.dll $(OutDir)\ThrowOptimizer.Tasks.dll $(OutDir)\ThrowOptimizer.dll $(OutDir)\Mono.Cecil.dll $(OutDir)\Mono.Cecil.Mdb.dll $(OutDir)\Mono.Cecil.Pdb.dll $(OutDir)\Mono.Cecil.Rocks.dll" />
+  </Target>
+</Project>

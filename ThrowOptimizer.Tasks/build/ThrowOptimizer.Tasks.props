@@ -1,0 +1,17 @@
+<!--
+  This file is automatically imported by NuGet into a user's project
+  when it targets a single framework, or in classic (pre 2017) csproj projects.
+-->
+<Project>
+  <UsingTask TaskName="ThrowOptimizer.Tasks.ThrowTask" AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\netstandard2.0\ThrowOptimizer.Tasks.dll" />
+  <Target Name="Throw" AfterTargets="Compile">
+    <!--<PropertyGroup Condition="'$(ThrowOptimizerILVerify)' == 'true'">
+      <ThrowOptimizerILVerifyReferencePath>@(ReferencePath)</ThrowOptimizerILVerifyReferencePath>
+      <ThrowOptimizerILVerifySystemAssembly Condition="$(ThrowOptimizerILVerifyReferencePath.Contains('System.Private.CoreLib')">System.Private.CoreLib</ThrowOptimizerILVerifySystemAssembly>
+      <ThrowOptimizerILVerifySystemAssembly Condition="!$(ThrowOptimizerILVerifyReferencePath.Contains('System.Private.CoreLib')">mscorlib</ThrowOptimizerILVerifySystemAssembly>
+      <ThrowOptimizerILVerifyIgnoreText Condition="'$(ThrowOptimizerILVerifyIgnore)' != ''">-g $(ThrowOptimizerILVerifyIgnore) </ThrowOptimizerILVerifyIgnoreText>
+    </PropertyGroup>-->
+    <ThrowTask AssemblyFile="@(IntermediateAssembly)" References="@(ReferencePath)"/>
+    <!--<Exec Command="dotnet ilverify @(IntermediateAssembly) -s mscorlib $(ThrowOptimizerILVerifyIgnoreText)-r $(ThrowOptimizerILVerifyReferencePath.Replace(';',' -r '))" Condition="'$(ThrowOptimizerILVerify)' == 'true'" />-->
+  </Target>
+</Project>

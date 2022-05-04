@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <LangVersion>9</LangVersion>
+    <ThrowOptimizerILVerify>true</ThrowOptimizerILVerify>
+  </PropertyGroup>
+    <ItemGroup>
+    <PackageReference Include="ThrowOptimizer.Tasks" Version="0.1.0-*" />
+  </ItemGroup>
+</Project>
