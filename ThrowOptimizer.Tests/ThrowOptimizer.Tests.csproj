@@ -18,7 +18,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThrowOptimizer.Tests.Code\ThrowOptimizer.Tests.Code.csproj" />
+    <ProjectReference Include="..\ThrowOptimizer.Tests.Samples\ThrowOptimizer.Tests.Samples.csproj" />
     <ProjectReference Include="..\ThrowOptimizer\ThrowOptimizer.csproj" />
   </ItemGroup>
   <Target Name="RestoreTools" BeforeTargets="Build">

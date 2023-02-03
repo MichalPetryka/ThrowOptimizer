@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using ThrowOptimizer.Tests.Code;
+using ThrowOptimizer.Tests.Samples;
 
 namespace ThrowOptimizer.Tests
 {

@@ -1,7 +1,9 @@
-﻿using Mono.Cecil;
+﻿using System.Collections.Generic;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using System.Linq;
 using System.Reflection;
-using ThrowOptimizer.Tests.Code;
+using ThrowOptimizer.Tests.Samples;
 using ThrowOptimizer.Utils;
 using Xunit;
 using Xunit.Abstractions;
@@ -49,30 +51,38 @@ namespace ThrowOptimizer.Tests
 		}
 
 		[Fact]
-		public void HasThrowTest()
+		public void HasOpcodeTest()
 		{
 			foreach (MethodDefinition method in AssemblyCode.Instance.Assembly.Modules
 														.Select(definition => definition.Types).Merge()
 														.Select(definition => definition.Methods).Merge()
-														.Where(definition => definition.HasAttribute<HasThrowAttribute>()))
+														.Where(definition => definition.HasAttribute<HasOpcodesAttribute>()))
 			{
 				_output.WriteLine(method.FullName);
-				Assert.Contains(method.Body.Instructions.Select(instruction => instruction.OpCode.Code),
-					code => code == Mono.Cecil.Cil.Code.Throw);
+				foreach (Code opcode in ((IEnumerable<CustomAttributeArgument>)method.CustomAttributes.First(attribute =>
+							attribute.AttributeType.TypeEquals<HasOpcodesAttribute>()).ConstructorArguments[0].Value).Select(argument => (Code)argument.Value))
+				{
+					Assert.Contains(method.Body.Instructions.Select(instruction => instruction.OpCode.Code),
+						code => code == opcode);
+				}
 			}
 		}
 
 		[Fact]
-		public void HasNoThrowTest()
+		public void HasNoOpcodeTest()
 		{
 			foreach (MethodDefinition method in AssemblyCode.Instance.Assembly.Modules
 														.Select(definition => definition.Types).Merge()
 														.Select(definition => definition.Methods).Merge()
-														.Where(definition => definition.HasAttribute<HasNoThrowAttribute>()))
+														.Where(definition => definition.HasAttribute<HasNoOpcodesAttribute>()))
 			{
 				_output.WriteLine(method.FullName);
-				Assert.DoesNotContain(method.Body.Instructions.Select(instruction => instruction.OpCode.Code),
-					code => code == Mono.Cecil.Cil.Code.Throw);
+				foreach (Code opcode in ((IEnumerable<CustomAttributeArgument>)method.CustomAttributes.First(attribute =>
+							attribute.AttributeType.TypeEquals<HasNoOpcodesAttribute>()).ConstructorArguments[0].Value).Select(argument => (Code)argument.Value))
+				{
+					Assert.DoesNotContain(method.Body.Instructions.Select(instruction => instruction.OpCode.Code),
+						code => code == opcode);
+				}
 			}
 		}
 	}
