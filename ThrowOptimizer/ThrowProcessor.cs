@@ -61,7 +61,7 @@ namespace ThrowOptimizer
 			foreach (TypeDefinition nestedType in type.NestedTypes)
 				ProcessType(nestedType);
 
-			foreach (MethodDefinition method in type.Methods)
+			foreach (MethodDefinition method in type.Methods.ToArray())
 				ProcessMethod(method);
 		}
 
@@ -73,7 +73,7 @@ namespace ThrowOptimizer
 			if (method.Body.Instructions.All(instruction => instruction.OpCode.Code != Code.Throw) || method.Body.Instructions.All(instruction => instruction.OpCode.Code != Code.Ret))
 				return;
 
-			Collection<Instruction> body = method.Body.Instructions;
+			Instruction[] body = method.Body.Instructions.ToArray();
 
 			foreach (int throwIndex in body.Select(instruction => instruction.OpCode.Code).ToArray().IndexOfAll(Code.Throw).Reverse())
 			{
@@ -83,13 +83,7 @@ namespace ThrowOptimizer
 					NoInlining = _configuration.NoInline,
 					Body =
 					{
-						InitLocals = _configuration.LocalsInitMode switch
-						{
-							LocalsInit.KeepOriginal => method.Body.InitLocals,
-							LocalsInit.Skip => false,
-							LocalsInit.Add => true,
-							_ => throw new ArgumentOutOfRangeException()
-						}
+						InitLocals = true
 					}
 				};
 
@@ -103,7 +97,6 @@ namespace ThrowOptimizer
 
 					switch (instruction.OpCode.Code)
 					{
-
 						//todo: try catch finally
 						case Code.Br or Code.Br_S:
 							starts.Add(((Instruction)instruction.Operand).Offset);
