@@ -15,16 +15,13 @@ namespace ThrowOptimizer.Tasks
 
 		public bool NoInline { get; set; } = false;
 
-		public LocalsInit LocalsInit { get; set; } = LocalsInit.KeepOriginal;
-
 		public override bool Execute()
 		{
 			Log.LogWarning(References);
 			using (ThrowProcessor throwProcessor = new(AssemblyFile, References.Split(';').Select(Path.GetDirectoryName).Distinct(),
 				new LogHandler(this), new ProcessingConfiguration()
 				{
-					NoInline = NoInline,
-					LocalsInitMode = LocalsInit
+					NoInline = NoInline
 				}))
 				throwProcessor.Process();
 			return true;
