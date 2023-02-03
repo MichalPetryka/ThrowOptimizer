@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using ThrowOptimizer.Tests.Code;
+using ThrowOptimizer.Tests.Samples;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace ThrowOptimizer.Tests
 {
-	public partial class IlVerifyTests
+	public class IlVerifyTests
 	{
 		private readonly ITestOutputHelper _output;
 

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThrowOptimizer.Console", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThrowOptimizer.Tests", "ThrowOptimizer.Tests\ThrowOptimizer.Tests.csproj", "{AEAA2BC2-02BC-46BB-94BD-075C536285D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThrowOptimizer.Tests.Code", "ThrowOptimizer.Tests.Code\ThrowOptimizer.Tests.Code.csproj", "{DB8A70AA-E4FB-44EB-B2C6-E52F6DC708CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThrowOptimizer.Tests.Samples", "ThrowOptimizer.Tests.Samples\ThrowOptimizer.Tests.Samples.csproj", "{DB8A70AA-E4FB-44EB-B2C6-E52F6DC708CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

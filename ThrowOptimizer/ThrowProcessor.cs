@@ -1,11 +1,11 @@
 ﻿using Mono.Cecil;
+using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
+using Mono.Collections.Generic;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
-using Mono.Collections.Generic;
 using ThrowOptimizer.Configuration;
 using ThrowOptimizer.Utils;
 
@@ -61,7 +61,7 @@ namespace ThrowOptimizer
 			foreach (TypeDefinition nestedType in type.NestedTypes)
 				ProcessType(nestedType);
 
-			foreach (MethodDefinition method in type.Methods.ToArray())
+			foreach (MethodDefinition method in type.Methods)
 				ProcessMethod(method);
 		}
 
@@ -73,7 +73,7 @@ namespace ThrowOptimizer
 			if (method.Body.Instructions.All(instruction => instruction.OpCode.Code != Code.Throw) || method.Body.Instructions.All(instruction => instruction.OpCode.Code != Code.Ret))
 				return;
 
-			Instruction[] body = method.Body.Instructions.ToArray();
+			Collection<Instruction> body = method.Body.Instructions;
 
 			foreach (int throwIndex in body.Select(instruction => instruction.OpCode.Code).ToArray().IndexOfAll(Code.Throw).Reverse())
 			{

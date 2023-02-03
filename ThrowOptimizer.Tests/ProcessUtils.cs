@@ -86,7 +86,7 @@ namespace ThrowOptimizer.Tests
 			}
 		}
 
-		[DllImport("Kernel32.dll", EntryPoint = "GetConsoleOutputCP", SetLastError = true)]
+		[DllImport("Kernel32", EntryPoint = "GetConsoleOutputCP", SetLastError = true)]
 		private static extern uint GetConsoleCodePage();
 
 		/// <summary>
@@ -141,9 +141,9 @@ namespace ThrowOptimizer.Tests
 
 				lock (outputLock)
 					output = outputBuilder.ToString().Trim();
-
 				lock (errorLock)
 					error = errorBuilder.ToString().Trim();
+
 				return process.ExitCode;
 			}
 		}

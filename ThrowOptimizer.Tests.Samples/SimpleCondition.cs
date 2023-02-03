@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Mono.Cecil.Cil;
+using System;
 
-namespace ThrowOptimizer.Tests.Code
+namespace ThrowOptimizer.Tests.Samples
 {
 	public static class SimpleCondition
 	{
@@ -9,7 +10,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[DoesNotThrow(1)]
 		[DoesNotThrow(2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static void PrimitiveBranch(int i)
 		{
 			if (i < 0)
@@ -21,11 +22,36 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[DoesNotThrow(1)]
 		[DoesNotThrow(2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static int PrimitiveBranchReturn(int i)
 		{
 			if (i < 0)
 				throw new Exception();
+			return i;
+		}
+
+		[Throws(typeof(NullReferenceException), -2)]
+		[Throws(typeof(NullReferenceException), -1)]
+		[DoesNotThrow(0)]
+		[DoesNotThrow(1)]
+		[DoesNotThrow(2)]
+		[HasNoOpcodes(Code.Throw, Code.Newobj, Code.Ldnull)]
+		public static void PrimitiveBranchNull(int i)
+		{
+			if (i < 0)
+				throw null!;
+		}
+
+		[Throws(typeof(NullReferenceException), -2)]
+		[Throws(typeof(NullReferenceException), -1)]
+		[DoesNotThrow(0)]
+		[DoesNotThrow(1)]
+		[DoesNotThrow(2)]
+		[HasNoOpcodes(Code.Throw, Code.Newobj, Code.Ldnull)]
+		public static int PrimitiveBranchNullReturn(int i)
+		{
+			if (i < 0)
+				throw null!;
 			return i;
 		}
 
@@ -34,7 +60,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(Exception), 1)]
 		[Throws(typeof(Exception), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static void PrimitiveBranchMessage(int i)
 		{
 			if (i != 0)
@@ -46,7 +72,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(Exception), 1)]
 		[Throws(typeof(Exception), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static int PrimitiveBranchMessageReturn(int i)
 		{
 			if (i != 0)
@@ -59,7 +85,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(InvalidOperationException), 1)]
 		[Throws(typeof(InvalidOperationException), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static void PrimitiveBranchException(int i)
 		{
 			if (i != 0)
@@ -71,7 +97,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(InvalidOperationException), 1)]
 		[Throws(typeof(InvalidOperationException), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static int PrimitiveBranchExceptionReturn(int i)
 		{
 			if (i != 0)
@@ -84,7 +110,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(InvalidOperationException), 1)]
 		[Throws(typeof(InvalidOperationException), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static void PrimitiveBranchThrow(int i)
 		{
 			if (i != 0)
@@ -99,7 +125,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[Throws(typeof(InvalidOperationException), 1)]
 		[Throws(typeof(InvalidOperationException), 2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static int PrimitiveBranchThrowReturn(int i)
 		{
 			if (i != 0)
@@ -115,7 +141,7 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[DoesNotThrow(1)]
 		[DoesNotThrow(2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static void PrimitiveBranchParamater(int i)
 		{
 			if (i < 0)
@@ -127,12 +153,42 @@ namespace ThrowOptimizer.Tests.Code
 		[DoesNotThrow(0)]
 		[DoesNotThrow(1)]
 		[DoesNotThrow(2)]
-		[HasNoThrow]
+		[HasNoOpcodes(Code.Throw, Code.Newobj)]
 		public static int PrimitiveBranchReturnParameter(int i)
 		{
 			if (i < 0)
 				throw new ArgumentOutOfRangeException(nameof(i), i, "Must be positive");
 			return i;
+		}
+
+
+
+		[Throws(typeof(Exception), -2)]
+		[Throws(typeof(Exception), -1)]
+		[Throws(typeof(InvalidOperationException), 0)]
+		[Throws(typeof(InvalidOperationException), 1)]
+		[Throws(typeof(InvalidOperationException), 2)]
+		[HasOpcodes(Code.Throw, Code.Newobj)]
+		[HasNoOpcodes(Code.Call)]
+		public static void PrimitiveBranchAlwaysThrow(int i)
+		{
+			if (i < 0)
+				throw new Exception();
+			throw new InvalidOperationException();
+		}
+
+		[Throws(typeof(Exception), -2)]
+		[Throws(typeof(Exception), -1)]
+		[Throws(typeof(InvalidOperationException), 0)]
+		[Throws(typeof(InvalidOperationException), 1)]
+		[Throws(typeof(InvalidOperationException), 2)]
+		[HasOpcodes(Code.Throw, Code.Newobj)]
+		[HasNoOpcodes(Code.Call)]
+		public static int PrimitiveBranchAlwaysThrowReturn(int i)
+		{
+			if (i < 0)
+				throw new Exception();
+			throw new InvalidOperationException();
 		}
 	}
 }

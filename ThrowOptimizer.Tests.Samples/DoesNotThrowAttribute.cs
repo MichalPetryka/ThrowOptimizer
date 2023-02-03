@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThrowOptimizer.Tests.Code
+namespace ThrowOptimizer.Tests.Samples
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class DoesNotThrowAttribute : Attribute
