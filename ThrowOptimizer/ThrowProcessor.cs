@@ -73,7 +73,7 @@ namespace ThrowOptimizer
 			if (method.Body.Instructions.All(instruction => instruction.OpCode.Code != Code.Throw))
 				return;
 
-			List<(int, int)> starts = ListPool<(int, int)>.Rent(first: (0, method.Body.Instructions.Count - 1));
+			List<(int segmentStart, int segmentEnd)> starts = ListPool<(int, int)>.Rent(first: (0, method.Body.Instructions.Count - 1));
 
 			for (int i = 0; i < method.Body.Instructions.Count; i++)
 			{
@@ -98,7 +98,8 @@ namespace ThrowOptimizer
 			if (starts.Count < 2)
 				return;
 
-			starts.Sort((left, right) => left.Item1.CompareTo(right.Item1));
+			starts.Sort((left, right) =>
+				left.segmentStart == right.segmentStart ? left.segmentEnd.CompareTo(right.segmentEnd) : left.segmentStart.CompareTo(right.segmentStart));
 
 			Instruction[] body = method.Body.Instructions.ToArray();
 
@@ -108,32 +109,32 @@ namespace ThrowOptimizer
 
 				for (int i = starts.Count - 1; i >= 0; i--)
 				{
-					(int, int) possibleStart = starts[i];
+					(int segmentStart, int segmentEnd) = starts[i];
 
-					if (possibleStart.Item1 >= possibleStart.Item2)
+					if (segmentStart >= segmentEnd)
 					{
 						return;
 					}
 
-					if (possibleStart.Item2 == throwIndex)
+					if (segmentEnd == throwIndex)
 						continue;
 
-					if (possibleStart.Item1 < throwIndex && possibleStart.Item2 < throwIndex &&
-						!new ArraySegment<Instruction>(body, possibleStart.Item1, possibleStart.Item2 - possibleStart.Item1)
+					if (segmentStart < throwIndex && segmentEnd < throwIndex &&
+						!new ArraySegment<Instruction>(body, segmentStart, segmentEnd - segmentStart)
 						.Any(c => c.OpCode.Code is Code.Throw or Code.Ret))
 					{
 						continue;
 					}
 
-					if (possibleStart.Item2 < throwIndex)
+					if (segmentEnd < throwIndex)
 					{
-						start = possibleStart.Item2;
+						start = segmentEnd;
 						break;
 					}
 
-					if (possibleStart.Item1 < throwIndex)
+					if (segmentStart < throwIndex)
 					{
-						start = possibleStart.Item1;
+						start = segmentStart;
 						break;
 					}
 				}
@@ -141,9 +142,10 @@ namespace ThrowOptimizer
 				if (start == 0)
 					continue;
 
-				MethodDefinition throwHelper = GenerateThrowHelper(method, new ArraySegment<Instruction>(body, start, throwIndex - start + 1), throwIndex);
+				ArraySegment<Instruction> instructions = new(body, start, throwIndex - start + 1);
+				MethodDefinition throwHelper = GenerateThrowHelper(method, instructions, throwIndex);
 				method.DeclaringType.Methods.Add(throwHelper);
-				RewriteCallsite(method.Body, new ArraySegment<Instruction>(body, start, throwIndex - start + 1), throwHelper);
+				RewriteCallsite(method.Body, instructions, throwHelper);
 			}
 
 			ListPool<(int, int)>.Return(starts);
