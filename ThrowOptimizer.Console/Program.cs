@@ -11,8 +11,6 @@ namespace ThrowOptimizer.Console
 		public string[] References { get; set; }
 		[Option]
 		public bool NoInline { get; set; }
-		[Option]
-		public LocalsInit LocalsInit { get; set; }
 
 		private class LogHandler : Utils.LogHandler.ILogHandler
 		{
@@ -24,7 +22,7 @@ namespace ThrowOptimizer.Console
 
 		public int OnExecute()
 		{
-			using (ThrowProcessor throwProcessor = new(Path, References, new LogHandler(), new ProcessingConfiguration { NoInline = NoInline, LocalsInitMode = LocalsInit }))
+			using (ThrowProcessor throwProcessor = new(Path, References, new LogHandler(), new ProcessingConfiguration { NoInline = NoInline }))
 				throwProcessor.Process();
 			return 0;
 		}
